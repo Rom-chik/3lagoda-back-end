@@ -1,7 +1,6 @@
 import express from "express";
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import pool from './db.js';
 // Import category routers
 import createCategoryRouter from './queries/category/create-category.js';
 import deleteCategoryRouter from './queries/category/delete-category.js';
@@ -36,6 +35,9 @@ import findReceiptsRouter from './queries/receipt/find-receipts.js';
 import deleteSaleRouter from './queries/sale/delete-sale.js';
 import updateSaleRouter from './queries/sale/update-sale.js';
 import findSalesRouter from './queries/sale/find-sales.js';*/
+//Import custom routers
+import customQuery1Router from './queries/custom/query-1.js';
+import customQuery2Router from './queries/custom/query-2.js';
 const app = express();
 const PORT = 3000;
 app.use(express.json());
@@ -81,16 +83,7 @@ app.use('/receipt', findReceiptsRouter);
 app.use('/sale', deleteSaleRouter);
 app.use('/sale', updateSaleRouter);
 app.use('/sale', findSalesRouter);*/
-//2 get selling categories from database
-app.get('/getSellingCategories', async (req, res) => {
-    try {
-        // Use the pool to execute a query
-        const { rows } = await pool.query('SELECT c."category_number", c."category_name" FROM category c WHERE NOT EXISTS ( SELECT * FROM product p WHERE p."category_number" = c."category_number" AND NOT EXISTS ( SELECT * FROM "store_product" sp INNER JOIN "sale" s ON sp."UPC" = s."UPC" WHERE sp."id_product" = p."id_product" ) );');
-        console.log(rows);
-        res.status(200).json(rows);
-    }
-    catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+// Use custom routers
+app.use('/custom', customQuery1Router);
+app.use('/custom', customQuery2Router);
 //# sourceMappingURL=server.js.map
